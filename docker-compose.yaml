@@ -1,0 +1,54 @@
+version: '3'
+
+services:
+  yu-pow1:
+    container_name: yu-pow1
+    image: zhengjianhui/yu-pow:latest
+    restart: always
+    privileged: true
+    ports:
+      - 7999:7999
+    volumes:
+      - ./config/node_1.toml:/go/chain/node.toml
+    networks:
+      yu-net:
+        ipv4_address: 172.16.0.11
+    command: ./yu-pow -k=/go/chain/node.toml
+
+  yu-pow2:
+    container_name: yu-pow2
+    image: zhengjianhui/yu-pow:latest
+    restart: always
+    privileged: true
+    ports:
+      - 7998:7999
+    volumes:
+      - ./config/node_2.toml:/go/chain/node.toml
+    networks:
+      yu-net:
+        ipv4_address: 172.16.0.12
+    depends_on:
+      - yu-pow1
+    command: ./yu-pow -k=/go/chain/node.toml
+
+  yu-pow3:
+    container_name: yu-pow3
+    image: zhengjianhui/yu-pow:latest
+    restart: always
+    privileged: true
+    ports:
+      - 7997:7999
+    volumes:
+      - ./config/node_3.toml:/go/chain/node.toml
+    networks:
+      yu-net:
+        ipv4_address: 172.16.0.13
+    depends_on:
+      - yu-pow1
+    command: ./yu-pow -k=/go/chain/node.toml
+
+networks:
+  yu-net:
+    ipam:
+      config:
+      - subnet: 172.16.0.0/24
